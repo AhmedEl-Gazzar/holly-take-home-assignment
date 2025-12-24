@@ -37,6 +37,7 @@ function scoreTokenMatch(tokensA: string[], tokensB: string[]) {
 function structureJob(jobCode: string) {
   const job = jobs.find(job => job.code === jobCode)
   if (!job) {
+    console.error(`Job code ${jobCode} not found`)
     throw new Error(`Job code ${jobCode} not found`)
   }
 
@@ -80,9 +81,6 @@ export function jobSearch(message: string) {
 
       return {
         jobId: job.code,
-        titleScore: titleScore,
-        jurisdictionScore: jurisdictionScore,
-        descriptionScore: descriptionScore,
         totalScore: titleScore + jurisdictionScore + descriptionScore,
       }
     })
@@ -90,12 +88,14 @@ export function jobSearch(message: string) {
     .filter(result => result.totalScore > 0)
 
   if (results.length === 0) {
+    console.error('No job descriptions found that match your search criteria')
     throw new Error(
       'No job descriptions found that match your search criteria. Explain the job you are looking for in more detail and try again.'
     )
   }
 
   if (results.length > 1 && results[0].totalScore === results[1].totalScore) {
+    console.error('Multiple job descriptions match your search criteria')
     throw new Error(
       'Multiple job descriptions match your search criteria. Please provide more specific details.'
     )

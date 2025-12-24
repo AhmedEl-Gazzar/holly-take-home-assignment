@@ -48,14 +48,14 @@ export async function answerQuestion({
     })
 
     if (!response.text) {
+      console.error('No response text received from the Gemeini model')
       throw new Error('No response text received from the Gemeini model')
     }
 
     const answer = answerSchema.parse(JSON.parse(response.text))
-    console.log('gemini response', answer)
 
     if (answer.status === 'error') {
-      console.error('Error in answer:', answer.error)
+      console.error('Error Status in LLM response', answer.error)
     }
     return answer.result
   } catch (e) {

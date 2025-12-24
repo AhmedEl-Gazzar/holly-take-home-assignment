@@ -19,19 +19,18 @@ export default function ChatClient() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!input) return
+
     setIsLoading(true)
 
     setMessages(prev => [...prev, { role: 'user', content: input }])
     setInput('')
     setError(null)
 
-    if (!input) return
-
     try {
       const response = await sendChatMessage({
-        input,
+        userInput: input,
       })
-      console.log(response)
       setMessages(prev => [
         ...prev,
         {
