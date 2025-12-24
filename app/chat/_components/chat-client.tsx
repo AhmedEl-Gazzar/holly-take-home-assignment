@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ChatInput } from './chat-input'
 import { ChatMessages } from './chat-messages'
+import { sendChatMessage } from '@/_lib/actions'
 
 export type Message = {
   role: 'user' | 'assistant'
@@ -12,6 +13,7 @@ export type Message = {
 export default function ChatClient() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const [messages, setMessages] = useState<Message[]>([])
 
@@ -21,13 +23,26 @@ export default function ChatClient() {
 
     setMessages(prev => [...prev, { role: 'user', content: input }])
     setInput('')
+    setError(null)
 
     if (!input) return
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    setMessages(prev => [
-      ...prev,
-      { role: 'assistant', content: 'Hello, how can I help you today?' },
-    ])
+
+    try {
+      const response = await sendChatMessage({
+        input,
+      })
+      console.log(response)
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: response.answer,
+        },
+      ])
+    } catch (error) {
+      const e = error as Error
+      setError(e.message)
+    }
 
     setIsLoading(false)
   }
@@ -37,6 +52,7 @@ export default function ChatClient() {
         <ChatMessages messages={messages} />
       </div>
       <div className="w-full bg-gray-100 h-30 p-2 rounded-lg ">
+        {error && <p className="text-red-500 text-center">{error}</p>}
         <ChatInput
           input={input}
           onChange={e => setInput(e.target.value)}

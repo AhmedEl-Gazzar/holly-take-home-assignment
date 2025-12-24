@@ -9,7 +9,7 @@ export function ChatMessages({ messages }: { messages: Message[] }) {
         <div
           key={index}
           className={`p-3 rounded-lg
-            max-w-60
+            max-w-80
              ${role === 'user' ? 'bg-blue-100 self-end' : 'bg-gray-100'}`}
         >
           <div className="text-sm">{content}</div>
